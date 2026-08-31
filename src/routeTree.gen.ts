@@ -10,33 +10,63 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CabinetRouteImport } from './routes/cabinet'
+import { Route as StatsRouteImport } from './routes/stats'
+import { Route as PlayEncounterRouteImport } from './routes/play.$encounter'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CabinetRoute = CabinetRouteImport.update({
+  id: '/cabinet',
+  path: '/cabinet',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StatsRoute = StatsRouteImport.update({
+  id: '/stats',
+  path: '/stats',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlayEncounterRoute = PlayEncounterRouteImport.update({
+  id: '/play/$encounter',
+  path: '/play/$encounter',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/cabinet': typeof CabinetRoute
+  '/stats': typeof StatsRoute
+  '/play/$encounter': typeof PlayEncounterRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/cabinet': typeof CabinetRoute
+  '/stats': typeof StatsRoute
+  '/play/$encounter': typeof PlayEncounterRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/cabinet': typeof CabinetRoute
+  '/stats': typeof StatsRoute
+  '/play/$encounter': typeof PlayEncounterRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/cabinet' | '/stats' | '/play/$encounter'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/cabinet' | '/stats' | '/play/$encounter'
+  id: '__root__' | '/' | '/cabinet' | '/stats' | '/play/$encounter'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CabinetRoute: typeof CabinetRoute
+  StatsRoute: typeof StatsRoute
+  PlayEncounterRoute: typeof PlayEncounterRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +78,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cabinet': {
+      id: '/cabinet'
+      path: '/cabinet'
+      fullPath: '/cabinet'
+      preLoaderRoute: typeof CabinetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stats': {
+      id: '/stats'
+      path: '/stats'
+      fullPath: '/stats'
+      preLoaderRoute: typeof StatsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/play/$encounter': {
+      id: '/play/$encounter'
+      path: '/play/$encounter'
+      fullPath: '/play/$encounter'
+      preLoaderRoute: typeof PlayEncounterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CabinetRoute: CabinetRoute,
+  StatsRoute: StatsRoute,
+  PlayEncounterRoute: PlayEncounterRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

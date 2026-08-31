@@ -47,9 +47,9 @@ export interface Relic {
   choices: string[];
   collectedAt: number;
   number: number;
-  favorite?: boolean;
-  daily?: boolean;
-  secret?: boolean;
+  favorite?: boolean | undefined;
+  daily?: boolean | undefined;
+  secret?: boolean | undefined;
 }
 
 export type EncounterId =
