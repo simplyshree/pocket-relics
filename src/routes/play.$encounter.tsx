@@ -8,7 +8,13 @@ import { getEncounter } from "@/lib/relics/encounters";
 import { generateRelic, generateSecretRelic } from "@/lib/relics/generate";
 import { useRelicState } from "@/lib/relics/storage";
 import { playSound } from "@/lib/sound";
-import { decodeFriend, relicImageBlob, relicLine, relicUrl } from "@/lib/relics/share";
+import {
+  copyText,
+  decodeFriend,
+  relicImageBlob,
+  relicLine,
+  relicUrl,
+} from "@/lib/relics/share";
 import type { Relic } from "@/lib/relics/types";
 
 export const Route = createFileRoute("/play/$encounter")({
@@ -119,19 +125,25 @@ function Play() {
       try {
         await navigator.share({ title: "Pocket Relics", text, url });
         return;
-      } catch {
-        /* cancelled */
+      } catch (error) {
+        if (error instanceof Error && error.name === "AbortError") return;
       }
     }
-    await navigator.clipboard.writeText(`${text}\n${url}`);
-    toast("copied. someone else should see this.");
+    const copied = await copyText(`${text}\n${url}`);
+    toast(
+      copied ? "copied. someone else should see this." : "couldn't copy this relic.",
+      copied ? undefined : { description: "try saving the image instead." },
+    );
   };
 
   const copyLink = async () => {
     if (!relic) return;
-    await navigator.clipboard.writeText(relicUrl(relic));
+    const copied = await copyText(relicUrl(relic));
     playSound("click", soundOn);
-    toast("relic link copied.");
+    toast(
+      copied ? "relic link copied." : "couldn't copy the relic link.",
+      copied ? undefined : { description: "your browser blocked clipboard access." },
+    );
   };
 
   const saveImage = async () => {
