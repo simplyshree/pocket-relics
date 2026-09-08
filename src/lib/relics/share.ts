@@ -29,6 +29,44 @@ export function relicUrl(relic: Relic) {
   return `${window.location.origin}/play/${relic.encounterId}?from=${payload}`;
 }
 
+/**
+ * Copies text when the modern Clipboard API is available, with a DOM fallback
+ * for browsers that only support the older document command.
+ */
+export async function copyText(text: string): Promise<boolean> {
+  if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      // Some browsers expose the API but reject writes outside a secure context.
+    }
+  }
+
+  if (typeof document === "undefined" || !document.body) return false;
+
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.opacity = "0";
+  textarea.style.pointerEvents = "none";
+  document.body.appendChild(textarea);
+  textarea.select();
+  textarea.setSelectionRange(0, textarea.value.length);
+
+  let copied = false;
+  try {
+    copied = document.execCommand("copy");
+  } catch {
+    copied = false;
+  } finally {
+    textarea.remove();
+  }
+
+  return copied;
+}
+
 export interface SharedFriend {
   t: string;
   s: string;
